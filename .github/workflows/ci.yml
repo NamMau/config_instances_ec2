@@ -44,7 +44,7 @@ jobs:
       #5. Build Docker image
       - name: Build Docker image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-app:latest .
 
       # 6. Push image
       - name: Push Docker image
