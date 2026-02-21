@@ -3,7 +3,7 @@ name: CI - Spring Boot Docker
 on:
   push:
     branches:
-      - features/register-system
+      - feature/register-system
       # after the ci is green=>>>>
       # - develop
 
@@ -18,7 +18,7 @@ jobs:
     steps:
       #1. check out source
       - name: Checkout code
-        uses: action/checkout@v4
+        uses: actions/checkout@v4
 
       #2. Set up JDK
       - name: Set up JDK 21
@@ -43,6 +43,11 @@ jobs:
 
       #5. Build Docker image
       - name: Build Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
+
+      # 6. Push image
+      - name: Push Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/spring-app:latest
 
