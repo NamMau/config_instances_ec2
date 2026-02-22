@@ -11,4 +11,13 @@ import lombok.RequiredArgsConstructor;
 public class AuthResponse {
     private String message;
     private String username;
+    private String token;
+
+    public AuthResponse(String token, String username) {
+        this.token = token;
+        this.username = username;
+    }
+
+    public String getToken() { return token; }
+    public String getUsername() { return username; }
 }
