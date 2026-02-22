@@ -1,30 +1,42 @@
 package org.example.ec2confi.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.ec2confi.dto.RegisterRequest;
 import org.example.ec2confi.entity.User;
 import org.example.ec2confi.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void registerUser(User user){
-        if(userRepository.existsByUsername(user.getUsername())){
-            throw new RuntimeException("Username is already exists");
+    // ✅ REGISTER
+    public void registerUser(RegisterRequest request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already exists");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole("USER");
+
         userRepository.save(user);
     }
 
-    public boolean authenticate(String username, String rawPassword){
-        return userRepository.findByUsername(username)
-                .map(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
-                .orElse(false);
+    // ✅ LOGIN CHECK
+    public void authenticate(String username, String rawPassword) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
     }
 }
