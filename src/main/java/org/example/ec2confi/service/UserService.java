@@ -14,7 +14,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // ✅ REGISTER
+    //REGISTER
     public void registerUser(RegisterRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -29,7 +29,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // ✅ LOGIN CHECK
+    //CHECK
     public void authenticate(String username, String rawPassword) {
 
         User user = userRepository.findByUsername(username)
