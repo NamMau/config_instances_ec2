@@ -28,7 +28,7 @@ services:
       driver: "json-file"
       options:
         max-size: "10m"
-        min-size: "3"
+        max-fize: "3"
 
   app:
     build:
@@ -54,7 +54,7 @@ services:
       driver: "json-file"
       options:
         max-size: "10m"
-        min-size: "3"
+        max-file: "3"
 
 volumes:
   mysql_data:
