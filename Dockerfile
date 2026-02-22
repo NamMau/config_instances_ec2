@@ -13,7 +13,9 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-COPY target/ec2confi-0.0.1-SNAPSHOT.jar app.jar
+#COPY FROM BUILDER STAGE
+COPY --from=builder /app/target/ec2confi-0.0.1-SNAPSHOT.jar app.jar
+#COPY target/ec2confi-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
