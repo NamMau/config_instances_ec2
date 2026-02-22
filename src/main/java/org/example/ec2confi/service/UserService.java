@@ -14,6 +14,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public void registerUser(User user){
+        if(userRepository.existsByUsername(user.getUsername())){
+            throw new RuntimeException("Username is already exists");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER");
         userRepository.save(user);
