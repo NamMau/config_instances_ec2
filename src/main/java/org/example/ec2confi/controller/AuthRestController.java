@@ -2,12 +2,10 @@ package org.example.ec2confi.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.ec2confi.dto.*;
 import org.example.ec2confi.entity.User;
 import org.example.ec2confi.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,7 +26,7 @@ public class AuthRestController {
         );
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequest request){
         boolean authenticated = userService.authenticate(
                         request.getUsername(),
