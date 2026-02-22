@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ec2confi.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,12 +31,21 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/saveUser", "/css/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/login",
+                                "/register",
+                                "/css/**",
+                                "/js/**",
+                                "/image/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
-                        .permitAll())
+                        .permitAll()
+                )
                 .logout(logout -> logout.permitAll());
 
         return http.build();
