@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ec2confi.dto.*;
 import org.example.ec2confi.entity.User;
 import org.example.ec2confi.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,32 +15,27 @@ public class AuthRestController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request){
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+    public ResponseEntity<AuthResponse> register(
+            @RequestBody RegisterRequest request) {
 
-        userService.registerUser(user);
-        return new AuthResponse(
-                "Register success",
-                request.getUsername()
+        userService.registerUser(request);
+
+        return ResponseEntity.ok(
+                new AuthResponse("Register success", request.getUsername())
         );
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request){
-        boolean authenticated = userService.authenticate(
-                        request.getUsername(),
-                        request.getPassword()
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody LoginRequest request) {
+
+        userService.authenticate(
+                request.getUsername(),
+                request.getPassword()
         );
 
-        if(!authenticated){
-            throw new RuntimeException("Incorrect username or password");
-        }
-
-        return new AuthResponse(
-                "Login success",
-                request.getUsername()
+        return ResponseEntity.ok(
+                new AuthResponse("Login success", request.getUsername())
         );
     }
 
