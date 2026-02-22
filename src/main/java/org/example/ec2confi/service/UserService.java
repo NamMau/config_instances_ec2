@@ -18,4 +18,10 @@ public class UserService {
         user.setRole("USER");
         userRepository.save(user);
     }
+
+    public boolean authenticate(String username, String rawPassword){
+        return userRepository.findByUsername(username)
+                .map(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
+                .orElse(false);
+    }
 }
