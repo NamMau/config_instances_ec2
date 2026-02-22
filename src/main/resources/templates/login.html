@@ -3,38 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="auth-container">
-<h2>
-    Login
-</h2>
-<form th:action="@{/login}" method="post">
-    <div>
-        <label>Username:</label>
-        <input type="text" name="username" required>
-    </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password" required>
-    </div>
+    <h2>Login</h2>
 
-    <button type="submit">Login</button>
-</form>
+    <form onsubmit="login(event)">
+        <div>
+            <label>Username:</label>
+            <input id="username" type="text" required>
+        </div>
 
-<p>
-    Don't have account?
-    <a th:href="@{/register}">Register here</a>
-</p>
+        <div>
+            <label>Password:</label>
+            <input id="password" type="password" required>
+        </div>
 
-<div th:if="${param.error}">
-    Invalid username or password!
+        <button type="submit">Login</button>
+    </form>
+
+    <p>
+        Don't have account?
+        <a href="/register">Register here</a>
+    </p>
+
+    <div id="message"></div>
 </div>
 
-<div th:if="${param.logout}">
-    You have been logged out
-</div>
-</div>
+<script>
+    async function login(event) {
+        event.preventDefault();
+
+        const messageEl = document.getElementById("message");
+        messageEl.innerText = "";
+
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.message || "Login failed");
+            }
+
+            messageEl.style.color = "green";
+            messageEl.innerText = "Login success!";
+
+            // sau này bạn sẽ redirect dashboard
+            setTimeout(() => {
+                window.location.href = "/home";
+            }, 1000);
+
+        } catch (err) {
+            messageEl.style.color = "red";
+            messageEl.innerText = err.message;
+        }
+    }
+</script>
 </body>
 </html>
