@@ -9,7 +9,7 @@
 <div class="auth-container">
     <h2>Login</h2>
 
-    <form onsubmit="login(event)">
+    <form id="loginForm">
         <div>
             <label>Username:</label>
             <input id="username" type="text" required>
@@ -32,11 +32,28 @@
 </div>
 
 <script>
+    // ✅ attach form submit (QUAN TRỌNG)
+    document.getElementById("loginForm")
+        .addEventListener("submit", login);
+
     async function login(event) {
         event.preventDefault();
 
         const messageEl = document.getElementById("message");
         messageEl.innerText = "";
+        messageEl.style.color = "red";
+
+        // ⭐ clear token cũ trước khi login
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (!username || !password) {
+            messageEl.innerText = "Please enter username and password";
+            return;
+        }
 
         try {
             const res = await fetch("/api/auth/login", {
@@ -45,28 +62,45 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    username: document.getElementById("username").value,
-                    password: document.getElementById("password").value
+                    username: username,
+                    password: password
                 })
             });
 
-            const data = await res.json();
+            let data = {};
+            try {
+                data = await res.json();
+                console.log("Login Response:", data);
+            } catch (e) {
+                throw new Error("Invalid server response");
+            }
 
             if (!res.ok) {
                 throw new Error(data.message || "Login failed");
             }
 
-            messageEl.style.color = "green";
-            messageEl.innerText = "Login success!";
+            // ⭐ MUST HAVE TOKEN
+            if (!data.token) {
+                throw new Error("Token not returned from server");
+            }
 
-            // sau này bạn sẽ redirect dashboard
+            // ✅ FIX QUAN TRỌNG: dùng data.token
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("username", data.username);
+
+            console.log("Token saved:", localStorage.getItem("token"));
+
+            messageEl.style.color = "green";
+            messageEl.innerText = "Login success! Redirecting...";
+
             setTimeout(() => {
-                window.location.href = "/home";
-            }, 1000);
+                window.location.replace("/dashboard");
+            }, 700);
 
         } catch (err) {
+            console.error("Login error:", err);
             messageEl.style.color = "red";
-            messageEl.innerText = err.message;
+            messageEl.innerText = err.message || "Login failed";
         }
     }
 </script>

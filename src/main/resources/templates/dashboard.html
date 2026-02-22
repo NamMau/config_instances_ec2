@@ -3,16 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h2>Welcome to dashboard</h2>
+
+<div class="dashboard-container">
+    <h2>Welcome to Dashboard 🚀</h2>
+
     <p>
         Logged in user:
-        <b th:text="${username}"></b>
+        <b id="username">loading...</b>
     </p>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Logout</button>
-    </form>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+
+    <div id="message"></div>
+</div>
+
+<script>
+    // ⭐ chạy khi mở trang
+    document.addEventListener("DOMContentLoaded", () => {
+        checkAuthAndLoadUser();
+    });
+
+    // ===============================
+    // ✅ CHECK TOKEN + LOAD USER
+    // ===============================
+    async function checkAuthAndLoadUser() {
+        const token = localStorage.getItem("token");
+
+        // ❌ chưa login
+        if (!token) {
+            redirectToLogin("You are not logged in");
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/user/me", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            // ❌ token hết hạn / sai
+            if (res.status === 401 || res.status === 403) {
+                localStorage.clear();
+                redirectToLogin("Session expired, please loging again.");
+                return;
+            }
+
+            if (!res.ok) {
+                throw new Error("Failed to load user");
+            }
+
+            const data = await res.json();
+            document.getElementById("username").innerText =
+                data.username || "unknown";
+
+        } catch (err) {
+            console.error("Load user error:", err);
+            redirectToLogin("Authentication error. Redirecting...");
+        }
+    }
+
+    // ===============================
+    // ✅ LOGOUT (JWT way)
+    // ===============================
+    function logout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+
+        window.location.replace("/login");
+    }
+
+    // ===============================
+    // ✅ REDIRECT HELPER
+    // ===============================
+    function redirectToLogin(message) {
+        const msgEl = document.getElementById("message");
+        msgEl.style.color = "red";
+        msgEl.innerText = message;
+
+        setTimeout(() => {
+            window.location.replace("/login");
+        }, 1000);
+    }
+</script>
 
 </body>
 </html>
