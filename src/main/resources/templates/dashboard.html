@@ -1,96 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box - Our Box</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static.css/style.css">
 </head>
 <body>
+<div class="box-container">
+    <aside class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-box-open"></i>
+            <span>Box</span>
+        </div>
 
-<div class="dashboard-container">
-    <h2>Welcome to Dashboard 🚀</h2>
+        <button class="btn-new" onclick="document.getElementById('fileUpload').click()">
+            <i class="fa-solid fa-plus"></i>
+            <span>Mới</span>
+        </button>
+        <input type="file" id="fileUpload" hidden onchange="uploadFile(this)">
 
-    <p>
-        Logged in user:
-        <b id="username">loading...</b>
-    </p>
+        <nav class="nav-menu">
+            <a href="#" class="active"><i class="fa-solid fa-hard-drive"></i> My Box</a>
+            <a href="#"><i class="fa-solid fa-share-nodes"></i> Share with me</a>
+            <a href="#"><i class="fa-solid fa-clock"></i> Recently</a>
+            <a href="#"><i class="fa-solid fa-star"></i> Starred</a>
+            <a href="#"><i class="fa-solid fa-trash-can"></i> Bin</a>
+        </nav>
 
-    <button class="logout-btn" onclick="logout()">Logout</button>
+        <div class="storage-info">
+            <div class="storage-bar"><div class="usage" style="width: 45%;"></div></div>
+            <p>Used 623,7 MB / 15 GB</p>
+        </div>
+    </aside>
 
-    <div id="message"></div>
+    <main class="main-content">
+        <header class="header">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Find in Box">
+            </div>
+            <div class="user-actions">
+                <i class="fa-regular fa-circle-question"></i>
+                <i class="fa-solid fa-gear"></i>
+                <div class="user-avatar" id="logoutBtn" title="Logout">N</div>
+            </div>
+        </header>
+
+        <section class="file-view">
+            <div class="view-header">
+                <h1>My Box</h1>
+                <div class="view-options">
+                    <i class="fa-solid fa-list-ul active"></i>
+                    <i class="fa-solid fa-grip"></i>
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="file-table">
+                    <thead>
+                    <tr>
+                        <th style="width: 40%">Name <i class="fa-solid fa-arrow-up"></i></th>
+                        <th>Owner</th>
+                        <th>Upload Date</th>
+                        <th>Size</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="fileList">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </div>
-
-<script>
-    // ⭐ chạy khi mở trang
-    document.addEventListener("DOMContentLoaded", () => {
-        checkAuthAndLoadUser();
-    });
-
-    // ===============================
-    // ✅ CHECK TOKEN + LOAD USER
-    // ===============================
-    async function checkAuthAndLoadUser() {
-        const token = localStorage.getItem("token");
-
-        // ❌ chưa login
-        if (!token) {
-            redirectToLogin("You are not logged in");
-            return;
-        }
-
-        try {
-            const res = await fetch("/api/user/me", {
-                method: "GET",
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            // ❌ token hết hạn / sai
-            if (res.status === 401 || res.status === 403) {
-                localStorage.clear();
-                redirectToLogin("Session expired, please loging again.");
-                return;
-            }
-
-            if (!res.ok) {
-                throw new Error("Failed to load user");
-            }
-
-            const data = await res.json();
-            document.getElementById("username").innerText =
-                data.username || "unknown";
-
-        } catch (err) {
-            console.error("Load user error:", err);
-            redirectToLogin("Authentication error. Redirecting...");
-        }
-    }
-
-    // ===============================
-    // ✅ LOGOUT (JWT way)
-    // ===============================
-    function logout() {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-
-        window.location.replace("/login");
-    }
-
-    // ===============================
-    // ✅ REDIRECT HELPER
-    // ===============================
-    function redirectToLogin(message) {
-        const msgEl = document.getElementById("message");
-        msgEl.style.color = "red";
-        msgEl.innerText = message;
-
-        setTimeout(() => {
-            window.location.replace("/login");
-        }, 1000);
-    }
-</script>
-
+<script src="/js/dashboard-logic.js"></script>
 </body>
 </html>
