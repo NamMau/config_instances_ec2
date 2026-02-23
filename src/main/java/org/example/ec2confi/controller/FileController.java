@@ -25,11 +25,15 @@ public class FileController {
     private final UserRepository userRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<FileResponse> upload(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
+    public ResponseEntity<FileResponse> upload(@RequestParam("files") MultipartFile files, Principal principal) throws IOException {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return ResponseEntity.ok(fileService.saveFile(file, user));
+        //return ResponseEntity.ok(fileService.saveFile(file, user));
+        for (MultipartFile file : files) {
+            fileService.saveFile(file, user);
+        }
+        return ResponseEntity.ok("Upload thành công " + files.length + " file");
     }
 
     @GetMapping("/my-files")
@@ -53,7 +57,7 @@ public class FileController {
                 .body(resource);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteFile(@PathVariable Long id, Principal principal) throws IOException {
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
