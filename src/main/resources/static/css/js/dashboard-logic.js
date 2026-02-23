@@ -1,5 +1,84 @@
 const token = localStorage.getItem('token');
+// Hàm tải file lên Server
+async function uploadFile(input) {
+    const files = input.files;
+    if (files.length === 0) return;
 
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+
+    try {
+        const response = await fetch('/api/files/upload', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Tải lên thành công!');
+            fetchFiles(); // Cập nhật lại danh sách ngay lập tức
+        } else {
+            const error = await response.json();
+            alert('Lỗi: ' + (error.message || 'Không thể tải lên'));
+        }
+    } catch (err) {
+        console.error('Upload error:', err);
+    } finally {
+        input.value = ''; // Reset input để có thể chọn lại cùng 1 file
+    }
+}
+
+// Hàm chọn Icon dựa trên định dạng file
+function getFileIcon(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    switch (ext) {
+        case 'pdf': return '<i class="fa-solid fa-file-pdf" style="color: #ea4335;"></i>';
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif': return '<i class="fa-solid fa-file-image" style="color: #f4b400;"></i>';
+        case 'doc':
+        case 'docx': return '<i class="fa-solid fa-file-word" style="color: #4285f4;"></i>';
+        case 'xls':
+        case 'xlsx': return '<i class="fa-solid fa-file-excel" style="color: #0f9d58;"></i>';
+        case 'zip':
+        case 'rar': return '<i class="fa-solid fa-file-zipper" style="color: #5f6368;"></i>';
+        default: return '<i class="fa-solid fa-file-lines" style="color: var(--box-blue);"></i>';
+    }
+}
+
+// Cập nhật lại hàm renderFiles để hiển thị đẹp hơn
+function renderFiles(files) {
+    const tbody = document.getElementById('fileList');
+    if (!tbody) return;
+
+    if (files.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 50px; color: #999;">Thư mục trống</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = files.map(file => `
+        <tr>
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    ${getFileIcon(file.fileName)}
+                    <span class="file-name" style="cursor:pointer;" onclick="previewFile(${file.id})">${file.fileName}</span>
+                </div>
+            </td>
+            <td>tôi</td>
+            <td>${new Date(file.uploadDate).toLocaleDateString('vi-VN')}</td>
+            <td>${file.fileSizeReadable || '0 KB'}</td>
+            <td>
+                <button class="action-btn" onclick="downloadFile(${file.id}, '${file.fileName}')"><i class="fa-solid fa-download"></i></button>
+                <button class="action-btn" onclick="deleteFile(${file.id})"><i class="fa-solid fa-trash-can"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
 async function fetchFiles() {
     const response = await fetch('/api/files/my-files', {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -13,7 +92,7 @@ function renderFiles(files) {
     tbody.innerHTML = files.map(file => `
         <tr>
             <td><i class="fa-regular fa-file-lines file-icon"></i> ${file.fileName}</td>
-            <td>tôi</td>
+            <td>me</td>
             <td>${new Date(file.uploadDate).toLocaleDateString('vi-VN')}</td>
             <td>${file.fileSizeReadable}</td>
             <td>
