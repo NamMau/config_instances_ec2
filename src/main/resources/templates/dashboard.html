@@ -44,7 +44,28 @@
             <div class="user-actions">
                 <i class="fa-regular fa-circle-question"></i>
                 <i class="fa-solid fa-gear"></i>
-                <div class="user-avatar" id="logoutBtn" title="Logout">N</div>
+                <div class="user-profile-wrapper">
+                    <div class="user-avatar" id="profileTrigger">N</div>
+
+                    <div class="profile-dropdown" id="profileMenu">
+                        <div class="dropdown-header">
+                            <p class="user-email" id="displayEmail">user@example.com</p>
+                            <div class="large-avatar">N</div>
+                            <h3 id="displayFullName">Chào bạn!</h3>
+                        </div>
+                        <div class="dropdown-body">
+                            <button class="btn-manage">Quản lý tài khoản của bạn</button>
+                            <div class="action-list">
+                                <div class="action-item"><i class="fa-solid fa-user-plus"></i> Thêm tài khoản khác</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-footer">
+                            <button id="logoutBtn" class="btn-logout">
+                                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
