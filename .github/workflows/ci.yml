@@ -3,7 +3,12 @@ name: CI - Spring Boot Docker
 on:
   push:
     branches:
-      - feature/register-system
+      - develop
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
+
       # after the ci is green=>>>>
       # - develop
 
