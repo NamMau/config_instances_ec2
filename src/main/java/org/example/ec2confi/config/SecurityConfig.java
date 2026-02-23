@@ -55,12 +55,17 @@ public class SecurityConfig {
                                 "/login",
                                 "/register",
                                 "/dashboard",
+                                "/favicon.ico",
                                 "/css/**",
                                 "/js/**",
                                 "/image/**"
                         ).permitAll()
                         .requestMatchers("/api/user/**").authenticated()
-                        .requestMatchers("/api/files/**").authenticated()
+                        //.requestMatchers("/api/files/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/files/upload").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/files/my-files").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/files/download/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/files/delete/**").authenticated()
                         .anyRequest().authenticated()
                 )
 
