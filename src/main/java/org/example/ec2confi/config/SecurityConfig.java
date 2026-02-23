@@ -60,6 +60,7 @@ public class SecurityConfig {
                                 "/image/**"
                         ).permitAll()
                         .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/files/**").authenticated()
                         .anyRequest().authenticated()
                 )
 
