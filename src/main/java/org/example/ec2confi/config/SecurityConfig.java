@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/files/my-files").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/files/download/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/files/delete/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/files/preview/**").authenticated()
                         .anyRequest().authenticated()
                 )
 
