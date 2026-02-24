@@ -16,4 +16,7 @@ public interface FileService {
     Resource loadFile(Long fileId, User user);
 
     void deleteFile(Long fileId, User user) throws IOException;
+
+    void shareFile(Long fileId, String targetUsername, String ownerUsername);
+    List<FileResponse> getSharedWithMeFiles(String username);
 }
