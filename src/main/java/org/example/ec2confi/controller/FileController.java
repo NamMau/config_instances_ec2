@@ -106,4 +106,16 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+    @PostMapping("/share/{fileId}")
+    public ResponseEntity<?> shareFile(@PathVariable Long fileId,
+                                       @RequestParam String targetUsername,
+                                       Principal principal) {
+        fileService.shareFile(fileId, targetUsername, principal.getName());
+        return ResponseEntity.ok("Shared success by " + targetUsername);
+    }
+
+    @GetMapping("/shared-with-me")
+    public ResponseEntity<List<FileResponse>> getSharedWithMe(Principal principal) {
+        return ResponseEntity.ok(fileService.getSharedWithMeFiles(principal.getName()));
+    }
 }
