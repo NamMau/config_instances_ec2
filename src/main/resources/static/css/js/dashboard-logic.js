@@ -51,7 +51,6 @@ function getFileIcon(fileName) {
     }
 }
 
-// Cập nhật lại hàm renderFiles để hiển thị đẹp hơn
 function renderFiles(files) {
     const tbody = document.getElementById('fileList');
     if (!tbody) return;
@@ -89,18 +88,151 @@ async function fetchFiles() {
 
 function renderFiles(files) {
     const tbody = document.getElementById('fileList');
+    if (!tbody) return;
+
     tbody.innerHTML = files.map(file => `
         <tr>
-            <td><i class="fa-regular fa-file-lines file-icon"></i> ${file.fileName}</td>
-            <td>me</td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    ${getFileIcon(file.fileName)}
+                    <span class="file-name" style="cursor:pointer; font-weight:500;"
+                          onclick="previewFile(${file.id}, '${file.fileName}')">
+                        ${file.fileName}
+                    </span>
+                </div>
+            </td>
+            <td>tôi</td>
             <td>${new Date(file.uploadDate).toLocaleDateString('vi-VN')}</td>
-            <td>${file.fileSizeReadable}</td>
+            <td>${file.fileSizeReadable || '0 KB'}</td>
             <td>
                 <button class="action-btn" onclick="downloadFile(${file.id}, '${file.fileName}')"><i class="fa-solid fa-download"></i></button>
                 <button class="action-btn" onclick="deleteFile(${file.id})"><i class="fa-solid fa-trash-can"></i></button>
             </td>
         </tr>
     `).join('');
+}
+
+async function previewFile(fileId, fileName) {
+    if (!fileName) {
+        console.error("fileName is missing!");
+        return;
+    }
+
+    const modal = document.getElementById('previewModal');
+    const img = document.getElementById('previewImage');
+    const pdf = document.getElementById('previewPDF');
+    const other = document.getElementById('previewOther');
+
+    // 1. Reset trạng thái cũ
+    img.style.display = 'none';
+    pdf.style.display = 'none';
+    other.style.display = 'none';
+    img.src = "";
+    pdf.src = "";
+
+    document.getElementById('previewFileName').innerText = fileName;
+    const ext = fileName.split('.').pop().toLowerCase();
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await fetch(`/api/files/preview/${fileId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        // 2. Nếu server trả về lỗi (400, 404, 500)
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Server error: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        // 3. Hiển thị dựa trên định dạng
+        if (['jpg', 'jpeg', 'png', 'gif', 'jfif'].includes(ext)) {
+            img.src = objectUrl;
+            img.style.display = 'block';
+        } else if (ext === 'pdf') {
+            pdf.src = objectUrl;
+            pdf.style.display = 'block';
+        } else {
+            other.style.display = 'block';
+            other.innerText = "Định dạng này không hỗ trợ xem trước trực tiếp.";
+        }
+
+        modal.style.display = "block";
+
+        // Gán sự kiện cho nút download trong modal nếu có
+        const downloadBtn = document.getElementById('previewDownloadBtn');
+        if (downloadBtn) {
+            downloadBtn.onclick = () => downloadFile(fileId, fileName);
+        }
+
+    } catch (err) {
+        console.error("Preview detail error:", err);
+        alert("Lỗi xem trước: " + err.message);
+    }
+}
+
+document.querySelector('.close-preview').onclick = () => {
+    document.getElementById('previewModal').style.display = "none";
+    document.getElementById('previewImage').src = "";
+    document.getElementById('previewPDF').src = "";
+};
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') document.getElementById('previewModal').style.display = "none";
+});
+
+
+async function downloadFile(fileId, fileName) {
+    try {
+        const response = await fetch(`/api/files/download/${fileId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName; // Đặt tên file khi tải về
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        } else {
+            alert("cannot download file. Error: " + response.status);
+        }
+    } catch (err) {
+        console.error("Download error:", err);
+    }
+}
+
+// 2. Hàm Xóa file
+async function deleteFile(fileId) {
+    if (!confirm("Do you want to delete this file")) return;
+
+    try {
+        const response = await fetch(`/api/files/delete/${fileId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            alert("Delete success!");
+            fetchFiles(); // Reload lại bảng
+        } else {
+            alert("Error when delete file.");
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

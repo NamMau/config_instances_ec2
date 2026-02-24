@@ -1,21 +1,31 @@
-/* Reset cơ bản */
+/* ===== 1. RESET & BIẾN CHUNG ===== */
+:root {
+    --box-blue: #1a73e8;
+    --box-blue-hover: #e8f0fe;
+    --bg-light: #f8f9fa;
+    --border-gray: #dadce0;
+    --text-gray: #5f6368;
+    --auth-primary: #667eea;
+    --auth-secondary: #764ba2;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Google Sans', Roboto, 'Segoe UI', Tahoma, Arial, sans-serif;
 }
 
-/* Background toàn trang */
-body {
+/* ===== 2. CSS CHO TRANG LOGIN & REGISTER (GIỮ NGUYÊN VẺ ĐẸP CŨ) ===== */
+body.auth-body {
     height: 100vh;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, var(--auth-primary), var(--auth-secondary));
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
-/* Card form */
 .auth-container {
     background: #ffffff;
     padding: 40px 35px;
@@ -25,14 +35,12 @@ body {
     animation: fadeIn 0.4s ease;
 }
 
-/* Title */
 .auth-container h2 {
     text-align: center;
     margin-bottom: 25px;
     color: #333;
 }
 
-/* Label */
 .auth-container label {
     font-size: 14px;
     color: #555;
@@ -40,7 +48,6 @@ body {
     margin-bottom: 6px;
 }
 
-/* Input */
 .auth-container input {
     width: 100%;
     padding: 10px 12px;
@@ -52,18 +59,17 @@ body {
 }
 
 .auth-container input:focus {
-    border-color: #667eea;
+    border-color: var(--auth-primary);
     outline: none;
     box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
 }
 
-/* Button */
 .auth-container button {
     width: 100%;
     padding: 11px;
     border: none;
     border-radius: 8px;
-    background: #667eea;
+    background: var(--auth-primary);
     color: white;
     font-size: 15px;
     font-weight: 600;
@@ -76,7 +82,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* Link text */
 .auth-container p {
     text-align: center;
     margin-top: 18px;
@@ -84,7 +89,7 @@ body {
 }
 
 .auth-container a {
-    color: #667eea;
+    color: var(--auth-primary);
     text-decoration: none;
     font-weight: 600;
 }
@@ -93,48 +98,430 @@ body {
     text-decoration: underline;
 }
 
-/* ===== DASHBOARD ===== */
-
-.dashboard-container {
-    width: 420px;
-    margin: 80px auto;
-    padding: 30px;
-    border-radius: 12px;
+/* ===== 3. CSS CHO TRANG DASHBOARD (BOX - CHUẨN GOOGLE DRIVE) ===== */
+body.dashboard-body {
     background: white;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: block; /* Hủy flex của auth-body để layout không bị co cụm */
+    overflow: hidden;
 }
 
-.dashboard-container h2 {
-    margin-bottom: 20px;
-    color: #333;
+.box-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
 }
 
-.logout-btn {
-    margin-top: 20px;
-    padding: 10px 18px;
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: var(--bg-light);
+    padding: 15px;
+    border-right: 1px solid var(--border-gray);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-gray);
+    margin-bottom: 25px;
+    padding-left: 10px;
+}
+
+.brand i {
+    color: var(--box-blue);
+    font-size: 28px;
+}
+
+/* Nút "Mới" (Upload) */
+.btn-new {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: white;
     border: none;
-    border-radius: 8px;
-    background: #e74c3c;
+    border-radius: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    margin-bottom: 20px;
+    width: fit-content;
+}
+
+.btn-new:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background: #f1f3f4;
+}
+
+/* Menu bên trái */
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: var(--text-gray);
+    border-radius: 0 24px 24px 0;
+    font-size: 14px;
+    margin-left: -15px;
+}
+
+.nav-menu a:hover {
+    background: #e8eaed;
+}
+
+.nav-menu a.active {
+    background: #e8f0fe;
+    color: var(--box-blue);
+    font-weight: 500;
+}
+
+.nav-menu i {
+    font-size: 18px;
+    width: 24px;
+}
+
+/* Thông tin bộ nhớ */
+.storage-info {
+    margin-top: auto;
+    padding: 20px 0;
+}
+
+.storage-bar {
+    background: #e0e0e0;
+    height: 4px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+}
+
+.usage {
+    background: var(--box-blue);
+    height: 100%;
+    border-radius: 2px;
+}
+
+.storage-info p {
+    font-size: 13px;
+    color: var(--text-gray);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.search-bar {
+    background: #f1f3f4;
+    width: 60%;
+    max-width: 700px;
+    padding: 10px 20px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: var(--text-gray);
+    font-size: 20px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: #e67e22;
     color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
 }
 
-.logout-btn:hover {
-    background: #c0392b;
+/* Khu vực hiển thị File */
+.file-view {
+    padding: 20px 30px;
+    overflow-y: auto;
 }
 
-/* Animation */
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.view-header h1 {
+    font-size: 18px;
+    font-weight: 400;
+    color: #3c4043;
+}
+
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.file-table th {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-gray);
+    font-size: 13px;
+    color: var(--text-gray);
+    font-weight: 500;
+}
+
+.file-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border-gray);
+    font-size: 14px;
+}
+
+.file-table tr:hover {
+    background: #f5f5f5;
+}
+
+.file-icon {
+    color: var(--box-blue);
+    margin-right: 12px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-gray);
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.action-btn:hover {
+    background: #e8eaed;
+}
+
+/* Hiệu ứng FadeIn cho Login */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Container quản lý vị trí */
+.user-profile-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Menu Dropdown */
+.profile-dropdown {
+    position: absolute;
+    top: 50px; /* Điều chỉnh khoảng cách */
+    right: 0;
+    width: 320px;
+    background: #e9eef6;
+    border-radius: 28px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    padding: 15px;
+    display: none; /* Mặc định ẩn */
+    z-index: 9999; /* Đảm bảo nổi lên trên cùng */
+    animation: fadeIn 0.2s ease;
+}
+
+/* Class điều khiển hiển thị - Phải dùng !important */
+.profile-dropdown.show {
+    display: block !important;
+}
+
+/* Header menu */
+.dropdown-header {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.user-email {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 12px;
+}
+
+.large-avatar {
+    width: 80px;
+    height: 80px;
+    background: #e67e22;
+    color: white;
+    font-size: 32px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.dropdown-header h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1f1f1f;
+}
+
+/* Nút quản lý */
+.btn-manage {
+    width: 100%;
+    background: white;
+    border: 1px solid #747775;
+    padding: 10px;
+    border-radius: 20px;
+    margin: 15px 0;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-manage:hover {
+    background: #f1f3f4;
+}
+
+/* Footer & Logout */
+.dropdown-footer {
+    border-top: 1px solid #c4c7c5;
+    padding-top: 15px;
+    text-align: center;
+}
+
+.btn-logout {
+    background: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #3c4043;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    transition: 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-logout:hover {
+    background: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.file-name {
+    color: #3c4043;
+    font-weight: 500;
+}
+.file-name:hover {
+    color: var(--box-blue);
+    text-decoration: underline;
+}
+.file-icon {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+/* Modal Preview */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.preview-header {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    color: white;
+}
+
+.preview-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 18px;
+}
+
+.preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.preview-actions i, .close-preview {
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.preview-actions i:hover, .close-preview:hover {
+    opacity: 1;
+}
+
+.modal-content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 100px);
+    width: 90%;
+    margin: 0 auto;
+}
+
+#previewImage {
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+#previewPDF {
+    width: 100%;
+    height: 100%;
+    background: white;
 }

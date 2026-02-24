@@ -96,6 +96,26 @@
         </section>
     </main>
 </div>
+<div id="previewModal" class="modal">
+    <div class="preview-header">
+        <div class="preview-info">
+            <i class="fa-solid fa-image" id="previewIcon"></i>
+            <span id="previewFileName">File Name</span>
+        </div>
+        <div class="preview-actions">
+            <i class="fa-solid fa-download" id="previewDownloadBtn" title="Download"></i>
+            <span class="close-preview">&times;</span>
+        </div>
+    </div>
+    <div class="modal-content-wrapper">
+        <img id="previewImage" src="" alt="Preview" style="display: none;">
+        <iframe id="previewPDF" src="" style="display: none;" frameborder="0"></iframe>
+        <div id="previewOther" style="display: none; color: white; text-align: center;">
+            <i class="fa-solid fa-file-circle-exclamation" style="font-size: 50px; margin-bottom: 15px;"></i>
+            <p>Not support for review</p>
+        </div>
+    </div>
+</div>
 <script src="/css/js/dashboard-logic.js"></script>
 </body>
 </html>
