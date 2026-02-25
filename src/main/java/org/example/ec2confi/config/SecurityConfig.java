@@ -51,6 +51,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",
                                 "/api/auth/**",
                                 "/login",
                                 "/register",
@@ -58,7 +59,8 @@ public class SecurityConfig {
                                 "/favicon.ico",
                                 "/css/**",
                                 "/js/**",
-                                "/image/**"
+                                "/image/**",
+                                "/error"
                         ).permitAll()
                         .requestMatchers("/api/user/**").authenticated()
                         //.requestMatchers("/api/files/**").authenticated()
