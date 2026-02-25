@@ -17,6 +17,4 @@ public interface FileService {
 
     void deleteFile(Long fileId, User user) throws IOException;
 
-    void shareFile(Long fileId, String targetUsername, String ownerUsername);
-    List<FileResponse> getSharedWithMeFiles(String username);
 }
