@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app
+  namespace: ec2confi-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ec2confi
+  template:
+    metadata:
+      labels:
+        app: ec2confi
+    spec:
+      containers:
+        - name: ec2confi
+          image: ec2confi:v1
+          # Use local image instead of pulling from Docker Hub
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          # Load all environment variables from ConfigMap
+          envFrom:
+            - configMapRef:
+                name: ec2confi-app-config
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ec2confi-secrets
+                  key: mysql-root-password
