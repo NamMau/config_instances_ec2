@@ -5,6 +5,7 @@ import org.example.ec2confi.dto.FileResponse;
 import org.example.ec2confi.entity.FileMetadata;
 import org.example.ec2confi.entity.User;
 import org.example.ec2confi.repository.FileRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 @RequiredArgsConstructor
 public class LocalFileService implements FileService {
 
@@ -119,5 +122,20 @@ public class LocalFileService implements FileService {
 
         double g = m / 1024.0;
         return String.format("%.1f GB", g);
+    }
+
+    // Sửa List<FileMetadata> thành List<FileResponse>
+    // Sửa List<FileMetadata> thành List<FileResponse>
+    @Override
+    public List<FileResponse> searchFiles(String fileName, User user) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Logic tìm kiếm và chuyển đổi sang Response DTO
+        return fileRepository.findByFileNameContainingIgnoreCaseAndOwner(fileName, user)
+                .stream()
+                .map(this::mapToResponse) // Bạn đã chuyển đổi sang FileResponse ở đây
+                .collect(Collectors.toList()); // Kết quả trả về phải là List<FileResponse>
     }
 }
