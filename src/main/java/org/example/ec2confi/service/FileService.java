@@ -1,6 +1,7 @@
 package org.example.ec2confi.service;
 
 import org.example.ec2confi.dto.FileResponse;
+import org.example.ec2confi.entity.FileMetadata;
 import org.example.ec2confi.entity.User;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,5 +17,7 @@ public interface FileService {
     Resource loadFile(Long fileId, User user);
 
     void deleteFile(Long fileId, User user) throws IOException;
+
+    List<FileResponse> searchFiles(String fileName,User user);
 
 }
