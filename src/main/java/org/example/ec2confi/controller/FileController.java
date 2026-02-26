@@ -2,6 +2,7 @@ package org.example.ec2confi.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.ec2confi.dto.FileResponse;
+import org.example.ec2confi.entity.FileMetadata;
 import org.example.ec2confi.entity.User;
 import org.example.ec2confi.repository.UserRepository;
 import org.example.ec2confi.service.FileService;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -105,6 +107,17 @@ public class FileController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<FileResponse>> search(
+            @RequestParam("name") String name,
+            Principal principal){
+
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(fileService.searchFiles(name, user));
     }
 
 }
